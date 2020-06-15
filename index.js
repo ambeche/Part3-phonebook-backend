@@ -1,13 +1,20 @@
 const express = require("express");
-const morgan = require('morgan')
+const cors = require("cors");
+const morgan = require("morgan");
 const app = express();
 
-morgan.token('data', (req, res) =>{
-  return req.method==='POST'||req.method==='PUT'? JSON.stringify(req.body): null
-} )
+morgan.token("data", (req, res) => {
+  return req.method === "POST" || req.method === "PUT"
+    ? JSON.stringify(req.body)
+    : null;
+});
 
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 app.use(express.json());
+app.use(cors())
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :data")
+);
+
 
 let persons = [
   {
