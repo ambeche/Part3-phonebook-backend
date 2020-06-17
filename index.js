@@ -21,10 +21,6 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :data")
 );
 
-const generateRandId = () => {
-  return Math.floor(Math.random() * 1000 + 1);
-};
-
 app.get("/info", (req, res) => {
   res.send(
     `<p>Phonebook has info for ${persons.length} people</p> 
@@ -60,19 +56,18 @@ app.post("/api/persons", (req, res) => {
   } else if (!data.number) {
     console.log("missing number");
     return res.status(400).json({ error: "missing number" });
-  } else if (persons.some((p) => p.name === data.name)) {
-    console.log("name must be unique");
-    return res.status(400).json({ error: "name must be unique" });
   }
-  console.log(data);
-  const person = {
-    id: generateRandId(),
+
+  const contact = new Contact({
     name: data.name,
     number: data.number,
-  };
-  persons = persons.concat(person);
+  }) 
 
-  res.json(person);
+  contact.save().then( savedContact => {
+    console.log('saved contact', savedContact);
+    res.json(savedContact)
+  })
+
 });
 
 const PORT = process.env.PORT;
