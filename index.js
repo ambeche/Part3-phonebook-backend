@@ -5,8 +5,6 @@ const morgan = require("morgan");
 const cors = require("cors");
 const Contact = require('./models/contact')
 
-
-
 morgan.token("data", (req, res) => {
   return req.method === "POST" || req.method === "PUT"
     ? JSON.stringify(req.body)
@@ -41,11 +39,9 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter((p) => p.id !== id);
-  console.log("deleted person", id);
-
-  res.status(204).end();
+  Contact.findByIdAndRemove(req.params.id)
+  .then( deleted => res.status(204).end())
+  .catch( error => next(error))
 });
 
 app.post("/api/persons", (req, res) => {
