@@ -14,11 +14,13 @@ const contactSchema = new mongoose.Schema({
   name: {
     type: String,
     required: '{PATH} is required',
+    minlength: 3,
     unique: true,
     uniqueCaseInsensitive: true,
   },
   number: {
     type: String,
+    minlength: 8,
     required: '{PATH} is required',
   }
 });
