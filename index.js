@@ -19,11 +19,6 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :data")
 );
 
-const missingFieldsErr = (data) => {
-  if (!data.name) throw new Error("missing name");
-  else if (!data.number) throw new Error("missing number");
-};
-
 app.get("/info", (req, res) => {
   Contact.where({})
     .countDocuments()
@@ -58,14 +53,12 @@ app.delete("/api/persons/:id", (req, res, next) => {
 app.put("/api/persons/:id", (req, res, next) => {
   const data = req.body;
 
-  missingFieldsErr(data);
-
   const contact = {
     name: data.name,
     number: data.number,
   };
 
-  Contact.findByIdAndUpdate(req.params.id, contact, { new: true })
+  Contact.findByIdAndUpdate(req.params.id, contact, { new: true, runValidators: true, context: 'query' })
     .then((updatedContact) =>
       updatedContact ? res.json(updatedContact.toJSON()) : res.status(404).end()
     )
@@ -75,17 +68,15 @@ app.put("/api/persons/:id", (req, res, next) => {
 app.post("/api/persons", (req, res, next) => {
   const data = req.body;
 
-  missingFieldsErr(data);
-
   const contact = new Contact({
     name: data.name,
     number: data.number,
   });
 
-  contact.save().then((savedContact) => {
-    console.log("saved contact", savedContact);
-    res.json(savedContact.toJSON());
-  });
+  contact
+    .save()
+    .then((savedContact) => res.json(savedContact.toJSON()))
+    .catch((error) => next(error));
 });
 
 const unrecognisedEnpoint = (req, res, next) => {
@@ -95,13 +86,9 @@ const unrecognisedEnpoint = (req, res, next) => {
 const errorHandler = (error, req, res, next) => {
   console.error(`error: ${error.name}\t${error.message}`);
   const err = res.status(400);
-  if (error.name === "CastError") {
-    return err.send({ error: "wrongly formatted id" });
-  } else if (error.message === "missing name") {
-    return err.json({ error: "missing name" });
-  } else if (error.message === "missing number") {
-    return err.json({ error: "missing number" });
-  }
+  if (error.name === "CastError") err.send({ error: "wrongly formatted id" });
+  else if (error.name === "ValidationError") err.json({ error: error.message });
+
   next(error);
 };
 
