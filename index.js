@@ -1,8 +1,8 @@
-require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') require("dotenv").config();
 const express = require("express");
 const app = express();
-const morgan = require("morgan");
 const cors = require("cors");
+const morgan = require("morgan");
 const Contact = require("./models/contact");
 
 morgan.token("data", (req, res) => {
@@ -58,7 +58,11 @@ app.put("/api/persons/:id", (req, res, next) => {
     number: data.number,
   };
 
-  Contact.findByIdAndUpdate(req.params.id, contact, { new: true, runValidators: true, context: 'query' })
+  Contact.findByIdAndUpdate(req.params.id, contact, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updatedContact) =>
       updatedContact ? res.json(updatedContact.toJSON()) : res.status(404).end()
     )
@@ -86,8 +90,10 @@ const unrecognisedEnpoint = (req, res, next) => {
 const errorHandler = (error, req, res, next) => {
   console.error(`error: ${error.name}\t${error.message}`);
   const err = res.status(400);
-  if (error.name === "CastError") err.send({ error: "wrongly formatted id" });
-  else if (error.name === "ValidationError") err.json({ error: error.message });
+  if (error.name === "CastError")
+    return err.send({ error: "wrongly formatted id" });
+  else if (error.name === "ValidationError")
+    return err.json({ error: error.message });
 
   next(error);
 };
