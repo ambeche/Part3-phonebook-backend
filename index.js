@@ -49,14 +49,9 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-  const data = req.body
+  const { name, number } = req.body
 
-  const contact = {
-    name: data.name,
-    number: data.number,
-  }
-
-  Contact.findByIdAndUpdate(req.params.id, contact, {
+  Contact.findByIdAndUpdate(req.params.id, { name, number }, {
     new: true,
     runValidators: true,
     context: 'query',
