@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "lint": "eslint .",
+    "lint:f": "eslint --fix .",
     "debug": "node --inspect index.js",
     "build:ui": "rm -rf build && cd .././FullStack2020/part2/phonebook && npm run build --prod && cp -r build ../../../part3-phonebook-backend/",
     "deploy": "git push heroku master",
@@ -24,6 +26,9 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.21.2",
     "nodemon": "^2.0.4"
   }
 }
