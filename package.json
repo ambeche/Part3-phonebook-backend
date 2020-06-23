@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "lint:f": "eslint --fix .",
     "debug": "node --inspect index.js",
-    "build:ui": "rm -rf build && cd .././FullStack2020/part2/phonebook && npm run build --prod && cp -r build ../../../part3-phonebook-backend/",
+    "build:ui": "rm -rf build && cd ../../FullStack2020/part2/phonebook && npm run build --prod && cp -r build ../../../backend2020/part3-phonebook-backend/",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m \"exer 3.21: fullstack build\" && npm run deploy",
     "logs:prod": "heroku logs --tail",
